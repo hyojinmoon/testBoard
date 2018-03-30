@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Test">
+	<resultMap type="sawonDTO" id="sawonDTO">
+		<result property="no" column="no"/>
+		<result property="kor_Name" column="kor_name"/>
+		<result property="eng_Name" column="eng_name"/>
+		<result property="chn_Name" column="chn_name"/>
+		<result property="jumin_Nof" column="jumin_nof"/>
+		<result property="jumin_Nob" column="jumin_nob"/>
+		<result property="jumin" column="jumin"/>
+		<result property="image" column="image"/>
+		<result property="birth1" column="birth1"/>
+		<result property="birth2" column="birth2"/>
+		<result property="birth3" column="birth3"/>
+		<result property="birth" column="birth"/>
+		<result property="sol_Flag" column="sol_flag"/>
+		<result property="sex" column="sex"/>
+		<result property="marry_Flag" column="marry_flag"/>
+		<result property="work_Year" column="work_year"/>
+		<result property="payment_Type" column="payment_type"/>
+		<result property="desire_Dept" column="desire_dept"/>
+		<result property="jop_Type" column="jop_type"/>
+		<result property="address" column="address"/>
+		<result property="phone1" column="phone1"/>
+		<result property="phone2" column="phone2"/>
+		<result property="phone3" column="phone3"/>
+		<result property="phone" column="phone"/>
+		<result property="email" column="email"/>
+		<result property="tech_Lev" column="tech_lev"/>
+		<result property="liquor" column="liquor"/>
+	</resultMap>
+	<insert id="insertSawon" parameterType="sawonDTO">
+		INSERT INTO sawon(no, kor_name, eng_name, chn_name, jumin_nof
+		, jumin_nob, jumin, image, birth1, birth2, birth3, birth
+		, sol_flag, sex, marry_flag, work_year, payment_type
+		, desire_dept, jop_type, address, phone1, phone2
+		, phone3, phone, email, tech_lev, liquor)
+		VALUES(sawonNo_seq.NEXTVAL, #{kor_Name}, #{eng_Name}, #{chn_Name}, #{jumin_Nof}
+		, #{jumin_Nob}, #{jumin}, #{image}, #{birth1}, #{birth2}, #{birth3}, #{birth}
+		, #{sol_Flag}, #{sex}, #{marry_Flag}, #{work_Year}, #{payment_Type}
+		, #{desire_Dept}, #{jop_Type}, #{address}, #{phone1}, #{phone2}
+		, #{phone3}, #{phone}, #{email}, #{tech_Lev}, #{liquor})
+	</insert>
+<!-- 	
+	<select id="selectList" resultType="sawonDTO">
+		SELECT no, kor_name, jumin, sex, tech_lev, jop_type, desire_dept
+		FROM sawon ORDER BY no DESC
+	</select>
+	 -->
+ 	<select id="pageCount" resultType="int">
+		SELECT COUNT(no) FROM sawon
+	</select>
+	<select id="viewSawon" resultType="sawonDTO" parameterType="int">
+		SELECT no, kor_name, eng_name, chn_name, jumin_nof
+		, jumin_nob, image, birth1, birth2, birth3
+		, sol_flag, sex, marry_flag, work_year, payment_type
+		, desire_dept, jop_type, address, phone1, phone2
+		, phone3, email, tech_lev, liquor
+		FROM sawon
+		WHERE no = #{no}
+	</select>
+		
+	<!-- 검색 : 다중검색 - 동적쿼리이용-->
+	<select id="selectList" resultType="sawonDTO" parameterType="pagingDTO">
+		SELECT no, kor_name, jumin, sex, tech_lev, jop_type, desire_dept
+		FROM sawon
+		WHERE 
+			<if test="selectGroup.equals('all')">
+				kor_name LIKE '%'||#{searchWord}||'%'
+				OR jumin LIKE '%'||#{searchWord}||'%'
+				OR sex LIKE '%'||#{searchWord}||'%'
+				OR tech_lev LIKE '%'||#{searchWord}||'%'
+				OR jop_type LIKE '%'||#{searchWord}||'%'
+				OR desire_dept LIKE '%'||#{searchWord}||'%'
+			</if>
+			<if test="selectGroup.equals('kor_Name')">
+				kor_name LIKE '%'||#{searchWord}||'%'
+			</if>
+			<if test="selectGroup.equals('sex')">
+				sex LIKE '%'||#{searchWord}||'%'
+			</if>
+			<if test="selectGroup.equals('tech_Lev')">
+				tech_lev LIKE '%'||#{searchWord}||'%'
+			</if>
+			<if test="selectGroup.equals('name_Sex')">
+				kor_name LIKE '%'||#{searchWord}||'%'
+				AND sex LIKE '%'||#{searchWord2}||'%'
+			</if>
+			<if test="selectGroup.equals('name_Tech_Lev')">
+				kor_name LIKE '%'||#{searchWord}||'%'
+				AND tech_lev LIKE '%'||#{searchWord2}||'%'
+			</if>
+			<if test="selectGroup.equals('sex_Tech_Lev')">
+				sex LIKE '%'||#{searchWord}||'%'
+				AND tech_lev LIKE '%'||#{searchWord2}||'%'
+			</if>
+		ORDER BY no DESC
+		LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	<select id="pageSearch" resultType="int" parameterType="pagingDTO">
+		SELECT COUNT(no) FROM sawon 
+		WHERE 
+			<if test="selectGroup.equals('all')">
+				kor_name LIKE '%'||#{searchWord}||'%'
+				OR jumin LIKE '%'||#{searchWord}||'%'
+				OR sex LIKE '%'||#{searchWord}||'%'
+				OR tech_lev LIKE '%'||#{searchWord}||'%'
+				OR jop_type LIKE '%'||#{searchWord}||'%'
+				OR desire_dept LIKE '%'||#{searchWord}||'%'
+			</if>
+			<if test="selectGroup.equals('kor_Name')">
+				kor_name LIKE '%'||#{searchWord}||'%'
+			</if>
+			<if test="selectGroup.equals('sex')">
+				sex LIKE '%'||#{searchWord}||'%'
+			</if>
+			<if test="selectGroup.equals('tech_Lev')">
+				tech_lev LIKE '%'||#{searchWord}||'%'
+			</if>
+			<if test="selectGroup.equals('name_Sex')">
+				kor_name LIKE '%'||#{searchWord}||'%'
+				AND sex LIKE '%'||#{searchWord2}||'%'
+			</if>
+			<if test="selectGroup.equals('name_Tech_Lev')">
+				kor_name LIKE '%'||#{searchWord}||'%'
+				AND tech_lev LIKE '%'||#{searchWord2}||'%'
+			</if>
+			<if test="selectGroup.equals('sex_Tech_Lev')">
+				sex LIKE '%'||#{searchWord}||'%'
+				AND tech_lev LIKE '%'||#{searchWord2}||'%'
+			</if>
+	</select>
+
+	<select id="checkJumin" resultType="int" parameterType="String">
+		SELECT COUNT(jumin) FROM sawon WHERE jumin = #{jumin}
+	</select>
+	<select id="checkJuminNo" resultType="int" parameterType="sawonDTO">
+		SELECT COUNT(jumin) FROM sawon WHERE jumin = #{jumin} 
+		AND no != #{no}
+	</select>
+	
+	<update id="updateSawon" parameterType="sawonDTO">
+		UPDATE sawon SET kor_name=#{kor_Name}, 
+								   eng_name=#{eng_Name}, 
+								   chn_name=#{chn_Name}, 
+								   jumin_nof=#{jumin_Nof}, 
+								   jumin_nob=#{jumin_Nob}, 
+								   jumin=#{jumin}, 
+								   image=#{image}, 
+								   birth1=#{birth1}, 
+								   birth2=#{birth2}, 
+								   birth3=#{birth3}, 
+								   birth=#{birth}, 
+								   sol_flag=#{sol_Flag}, 
+								   sex=#{sex}, 
+								   marry_flag=#{marry_Flag}, 
+								   work_year=#{work_Year}, 
+								   payment_type=#{payment_Type},
+								   desire_dept=#{desire_Dept}, 
+								   jop_type=#{jop_Type}, 
+								   address=#{address}, 
+								   phone1=#{phone1}, 
+								   phone2=#{phone2}, 
+								   phone3=#{phone3}, 
+								   phone=#{phone}, 
+								   email=#{email}, 
+								   tech_lev=#{tech_Lev}, 
+								   liquor=#{liquor}
+		WHERE no=#{no}
+	</update>
+	
+	<delete id="deleteSawon" parameterType="int">
+		DELETE sawon WHERE no = #{no}
+	</delete>
+	
+</mapper>
